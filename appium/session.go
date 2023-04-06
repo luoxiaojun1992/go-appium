@@ -1,5 +1,13 @@
 package appium
 
+import (
+    "bytes"
+    "encoding/json"
+    "fmt"
+    "net/http"
+    "os"
+)
+
 type Session struct {
     ID            string
     PlatformName  string
