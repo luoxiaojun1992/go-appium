@@ -206,3 +206,27 @@ func (s *Session) Unlock() error {
 
     return nil
 }
+
+func (s *Session) InstallApp(appPath string) error {
+    url := fmt.Sprintf("%s/wd/hub/session/%s/appium/device/install_app", s.URL, s.SessionID)
+
+    file, err := os.Open(appPath)
+    if err != nil {
+        return err
+    }
+    defer file.Close()
+
+    req, err := http.NewRequest("POST", url, file)
+    if err != nil {
+        return err
+    }
+
+    res, err := s.Client.Do(req)
+    if err != nil {
+        return err
+    }
+
+    defer res.Body.Close()
+
+    return nil
+}
