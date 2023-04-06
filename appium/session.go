@@ -86,7 +86,7 @@ func (s *Session) Stop() error {
 }
 
 func (s *Session) FindElement(using string, value string) (*Element, error) {
-    url := fmt.Sprintf("%s/element", s.URL)
+    url := fmt.Sprintf("%s/element", s.WebDriverAddr)
     params := map[string]interface{}{
         "using": using,
         "value": value,
@@ -208,12 +208,13 @@ func (s *Session) Unlock() error {
 }
 
 func (s *Session) InstallApp(appPath string) error {
-    url := fmt.Sprintf("%s/wd/hub/session/%s/appium/device/install_app", s.URL, s.SessionID)
+    url := fmt.Sprintf("%s/wd/hub/session/%s/appium/device/install_app", s.WebDriverAddr, s.ID)
 
     file, err := os.Open(appPath)
     if err != nil {
         return err
     }
+    
     defer file.Close()
 
     req, err := http.NewRequest("POST", url, file)
@@ -227,6 +228,16 @@ func (s *Session) InstallApp(appPath string) error {
     }
 
     defer res.Body.Close()
+
+    var result map[string]interface{}
+    err = json.NewDecoder(res.Body).Decode(&result)
+    if err != nil {
+        return err
+    }
+
+    if result["status"].(int) != 0 {
+        return fmt.Errorf(result["value"].(string))
+    }
 
     return nil
 }
