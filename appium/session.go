@@ -84,3 +84,43 @@ func (s *Session) Stop() error {
 
     return nil
 }
+
+func (s *AppiumSession) FindElement(using string, value string) (*Element, error) {
+    url := fmt.Sprintf("%s/element", s.URL)
+    params := map[string]interface{}{
+        "using": using,
+        "value": value,
+    }
+
+    data, err := json.Marshal(params)
+    if err != nil {
+        return nil, err
+    }
+
+    req, err := http.NewRequest("POST", url, bytes.NewBuffer(data))
+    if err != nil {
+        return nil, err
+    }
+
+    req.Header.Set("Content-Type", "application/json")
+
+    res, err := s.Client.Do(req)
+    if err != nil {
+        return nil, err
+    }
+
+    defer res.Body.Close()
+
+    var result map[string]interface{}
+    err = json.NewDecoder(res.Body).Decode(&result)
+    if err != nil {
+        return nil, err
+    }
+
+    if result["status"].(int) != 0 {
+        return nil, fmt.Errorf(result["value"].(string))
+    }
+
+    elementID := result["value"].(map[string]interface{})["ELEMENT"].(string)
+    return &Element{ID: elementID, Session: s}, nil
+}
