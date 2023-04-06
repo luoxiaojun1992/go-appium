@@ -1,16 +1,20 @@
 package appium
 
-type AppiumClient struct {
+import (
+    "net/url"
+)
+
+type Client struct {
 	ServerUrl *url.URL
 }
 
-func NewAppiumClient(serverUrl string) (*AppiumClient, error) {
+func NewClient(serverUrl string) (*Client, error) {
 	u, err := url.Parse(serverUrl)
 	if err != nil {
 		return nil, err
 	}
 
-	return &AppiumClient{
+	return &Client{
 		ServerUrl: u,
 	}, nil
 }
