@@ -8,6 +8,46 @@ import (
     "os"
 )
 
+type SessionOptions struct {
+	PlatformName  string
+	PlatformVer   string
+	DeviceName    string
+	App           string
+	Automation    string
+}
+
+type SessionOption func(*SessionOptions)
+
+func WithPlatformName(platformName string) SessionOption {
+	return func(o *SessionOptions) {
+		o.PlatformName = platformName
+	}
+}
+
+func WithPlatformVer(platformVer string) SessionOption {
+	return func(o *SessionOptions) {
+		o.PlatformVer = platformVer
+	}
+}
+
+func WithDeviceName(deviceName string) SessionOption {
+	return func(o *SessionOptions) {
+		o.DeviceName = deviceName
+	}
+}
+
+func WithApp(app string) SessionOption {
+	return func(o *SessionOptions) {
+		o.App = app
+	}
+}
+
+func WithAutomation(automation string) SessionOption {
+	return func(o *SessionOptions) {
+		o.Automation = automation
+	}
+}
+
 type Session struct {
     ID            string
     PlatformName  string
