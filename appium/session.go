@@ -162,3 +162,47 @@ func (s *Session) Log(logType string) ([]map[string]interface{}, error) {
 
     return result, nil
 }
+
+func (s *Session) Lock(duration int) error {
+    url := fmt.Sprintf("%s/appium/device/lock", s.URL)
+
+    data := map[string]int{"seconds": duration}
+    body, err := json.Marshal(data)
+    if err != nil {
+        return err
+    }
+
+    req, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
+    if err != nil {
+        return err
+    }
+
+    req.Header.Set("Content-Type", "application/json")
+
+    res, err := s.Client.Do(req)
+    if err != nil {
+        return err
+    }
+
+    defer res.Body.Close()
+
+    return nil
+}
+
+func (s *Session) Unlock() error {
+    url := fmt.Sprintf("%s/appium/device/unlock", s.URL)
+
+    req, err := http.NewRequest("POST", url, nil)
+    if err != nil {
+        return err
+    }
+
+    res, err := s.Client.Do(req)
+    if err != nil {
+        return err
+    }
+
+    defer res.Body.Close()
+
+    return nil
+}
