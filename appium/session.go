@@ -143,3 +143,22 @@ func (s *Session) Status() (map[string]interface{}, error) {
 
     return result, nil
 }
+
+func (s *Session) Log(logType string) ([]map[string]interface{}, error) {
+    url := fmt.Sprintf("%s/log/%s", s.URL, logType)
+
+    res, err := s.Client.Get(url)
+    if err != nil {
+        return nil, err
+    }
+
+    defer res.Body.Close()
+
+    var result []map[string]interface{}
+    err = json.NewDecoder(res.Body).Decode(&result)
+    if err != nil {
+        return nil, err
+    }
+
+    return result, nil
+}
