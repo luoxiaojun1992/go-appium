@@ -289,3 +289,36 @@ func (s *Session) InstallApp(appPath string) error {
 
     return nil
 }
+
+func (s *Session) GetPerformanceData(packageName string, dataType string, dataReadTimeout time.Duration) (map[string]interface{}, error) {
+    // 构造请求体
+    requestData := map[string]interface{}{
+        "packageName":    packageName,
+        "dataType":       dataType,
+        "dataReadTimeout": int(dataReadTimeout / time.Millisecond),
+    }
+    requestBodyBytes, err := json.Marshal(requestData)
+    if err != nil {
+        return nil, err
+    }
+
+    // 发送请求
+    req, err := http.NewRequest("POST", s.WebDriverAddr+"/session/"+s.ID+"/appium/performanceData", bytes.NewReader(requestBodyBytes))
+    if err != nil {
+        return nil, err
+    }
+    req.Header.Set("Content-Type", "application/json")
+    resp, err := s.Client.Do(req)
+    if err != nil {
+        return nil, err
+    }
+    defer resp.Body.Close()
+
+    // 解析响应体
+    var responseData map[string]interface{}
+    err = json.NewDecoder(resp.Body).Decode(&responseData)
+    if err != nil {
+        return nil, err
+    }
+    return responseData, nil
+}
