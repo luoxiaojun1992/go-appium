@@ -174,7 +174,7 @@ func (s *Session) FindElement(using string, value string) (*Element, error) {
 }
 
 func (s *Session) Status() (map[string]interface{}, error) {
-    url := fmt.Sprintf("%s/status", s.URL)
+    url := fmt.Sprintf("%s/status", s.WebDriverAddr)
 
     res, err := s.Client.Get(url)
     if err != nil {
@@ -193,7 +193,7 @@ func (s *Session) Status() (map[string]interface{}, error) {
 }
 
 func (s *Session) Log(logType string) ([]map[string]interface{}, error) {
-    url := fmt.Sprintf("%s/log/%s", s.URL, logType)
+    url := fmt.Sprintf("%s/log/%s", s.WebDriverAddr, logType)
 
     res, err := s.Client.Get(url)
     if err != nil {
@@ -212,7 +212,7 @@ func (s *Session) Log(logType string) ([]map[string]interface{}, error) {
 }
 
 func (s *Session) Lock(duration int) error {
-    url := fmt.Sprintf("%s/appium/device/lock", s.URL)
+    url := fmt.Sprintf("%s/appium/device/lock", s.WebDriverAddr)
 
     data := map[string]int{"seconds": duration}
     body, err := json.Marshal(data)
@@ -238,7 +238,7 @@ func (s *Session) Lock(duration int) error {
 }
 
 func (s *Session) Unlock() error {
-    url := fmt.Sprintf("%s/appium/device/unlock", s.URL)
+    url := fmt.Sprintf("%s/appium/device/unlock", s.WebDriverAddr)
 
     req, err := http.NewRequest("POST", url, nil)
     if err != nil {
@@ -256,7 +256,7 @@ func (s *Session) Unlock() error {
 }
 
 func (s *Session) InstallApp(appPath string) error {
-    url := fmt.Sprintf("%s/wd/hub/session/%s/appium/device/install_app", s.WebDriverAddr, s.ID)
+    url := fmt.Sprintf("%s/session/%s/appium/device/install_app", s.WebDriverAddr, s.ID)
 
     file, err := os.Open(appPath)
     if err != nil {
